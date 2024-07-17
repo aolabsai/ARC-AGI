@@ -3,44 +3,29 @@
 import numpy as np
 import json
 
-from ao_core import ao_core as ao
-from ao_core import Arch as aoArch
+# assumes an available local installation of ao_core; refer to https://github.com/aolabsai/ao_core?tab=readme-ov-file#installing-ao_core
+import ao_core as ao
 
-
-description = "3600-neuron Agent for ARC benchmarking"      #    MNIST is in grayscale, which we downscaled to B&W for the simple 28x28 neuron count -- 788 = 28x28 + 4
-arch_i = [30*30 * 4]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
-arch_z = [30*30 * 4]                   # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
-arch_c = []
-connector_function = "rand_conn"
-connector_parameters = [1200, 1200, 1200, 1200]
-# so all Q neurons are connected randomly to 1200 I and 1200 neighbor Q
-# and all Z neurons are connected randomly to 784 Q and 4 (or all) neighbor Z
-
-description = "3600-neuron Agent for ARC benchmarking"      #    MNIST is in grayscale, which we downscaled to B&W for the simple 28x28 neuron count -- 788 = 28x28 + 4
-arch_i = [11*11 * 4]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
-arch_z = [11*11 * 4]                   # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
+description = "ARC Agent"      #    MNIST is in grayscale, which we downscaled to B&W for the simple 28x28 neuron count -- 788 = 28x28 + 4
+arch_i = [10*10 * 4]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
+arch_z = [10*10 * 4]                   # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
 arch_c = []
 connector_function = "full_conn"
-connector_parameters = [3, 3, 4, 5]
+# connector_parameters = [1200, 1200, 1200, 1200]
 # so all Q neurons are connected randomly to 1200 I and 1200 neighbor Q
 # and all Z neurons are connected randomly to 784 Q and 4 (or all) neighbor Z
 
-
-
-
-
 # To maintain compatability with our API, do not change the variable name "Arch" or the constructor class "ao.Arch" in the line below (the API is pre-loaded with a version of the Arch class in this repo's main branch, hence "ao.Arch")
-arcArch = aoArch.Arch(arch_i, arch_z, arch_c, connector_function, connector_parameters, description)
-
+arcArch = ao.Arch(arch_i, arch_z, arch_c, connector_function, description)
 arcAgent = ao.Agent( arcArch )
 
 
-test_file = open("ARC-AGI/data/training/ea32f347.json")
+test_file = open("ARC-AGI/data/training/445eab21.json")
 
 test_data = json.load(test_file)
 
 
-def pad_ARC( arr, pad_value=10, final_size=(11, 11)):
+def pad_ARC( arr, pad_value=10, final_size=(10, 10)):
     # transform to binary
     inpextra = ( (final_size[0]-arr.shape[0])/2, (final_size[1]-arr.shape[1])/2 )
 
