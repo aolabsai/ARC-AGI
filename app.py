@@ -21,12 +21,9 @@ def process_task():
     
 
     pred_array = Data[0]
-    # pred_array = pred_array.tolist()
+    
     pred_array = json.dumps(pred_array)
-    # pred_array = []
-    # for pair in test_data['test']:
-    #     onp = (pair['output'])
-    #     pred_array.append(onp)
+    print('trainin Done')
        
    
     return jsonify(pred_array=pred_array)
