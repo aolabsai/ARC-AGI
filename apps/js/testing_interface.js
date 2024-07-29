@@ -322,6 +322,7 @@ function updateOutput() {
             var pair = {};
             pair.qstate = pred_array[i][selectedIndex][1];  // use selected index here
             TEST_PAIRS_QSTATE.push(pair);
+            console.log("updated displayed state")
         }
     }
 
@@ -367,6 +368,32 @@ function nextTestInput() {
     $('#current_test_input_id_display').html(CURRENT_TEST_PAIR_INDEX + 1);
     $('#total_test_input_count_display').html(test.length);
 }
+
+
+function previousTestInput() {
+    if (TEST_PAIRS.length >= CURRENT_TEST_PAIR_INDEX + 1) {
+        errorMsg('No previous test input. Pick another file?')
+        return
+    }
+    CURRENT_TEST_PAIR_INDEX -= 1;
+    values = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['input'];
+    values_o = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['output'];
+    values_pred = TEST_PAIRS_PRED[CURRENT_TEST_PAIR_INDEX]['pred'];
+    values_qstate = TEST_PAIRS_QSTATE[CURRENT_TEST_PAIR_INDEX]['qstate'];
+    CURRENT_INPUT_GRID = convertSerializedGridToGridObject(values)
+    CURRENT_OUTPUT_GRID = convertSerializedGridToGridObject(values_o)
+    CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred)
+    CURRENT_OUTPUT_QSTATE_GRID = convertSerializedGridToGridObject(values_qstate)
+    fillTestInput(CURRENT_INPUT_GRID);
+    fillTestOutput(CURRENT_OUTPUT_GRID);
+    fillTestOutputPred(CURRENT_OUTPUT_PRED_GRID);
+    fillTestOutputQstate(CURRENT_OUTPUT_QSTATE_GRID);
+
+    $('#current_test_input_id_display').html(CURRENT_TEST_PAIR_INDEX + 1);
+    $('#total_test_input_count_display').html(test.length);
+}
+
+
 
 function submitSolution() {
     syncFromEditionGridToDataGrid();

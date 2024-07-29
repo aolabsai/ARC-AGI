@@ -22,6 +22,7 @@
                 <br />
                 <input type="file" class="load_task"/>
                 <button onclick="randomTask()" id="random_task_btn">Random task</button>
+                <button onclick="runAgent()" id="run_ao_agent">Run Agent</button>
             </div>
         </div>
         <div id="workspace">
@@ -35,7 +36,8 @@
 
                 <div id="evaluation-input-view">
                     <div class="text">Test input grid <span id="current_test_input_id_display">0</span>/<span id="total_test_input_count_display">0</span>
-                        <button onclick="nextTestInput()">Next test input</button>
+                        <button onclick="nextTestInput()">Next test</button>
+                        <button onclick="previousTestInput()">Previous test</button>
                     </div>
 
                     <div id="evaluation_input" class="selectable_grid"></div>

@@ -5,8 +5,9 @@ import random
 
 # assumes an available local installation of ao_core; refer to https://github.com/aolabsai/ao_core?tab=readme-ov-file#installing-ao_core
 import ao_core as ao
-neurons_x = 10 #its a global variable for number of neurons 
-neurons_y = 10
+neurons_x = 30 #its a global variable for number of neurons 
+
+neurons_y = 30
 description = "ARC Agent"      #    MNIST is in grayscale, which we downscaled to B&W for the simple 28x28 neuron count -- 788 = 28x28 + 4
 arch_i = [neurons_x*neurons_y * 4]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
 arch_z = [neurons_x*neurons_y * 4]                   # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
@@ -142,7 +143,7 @@ def ARC_main(tasks):
     Data = []
     for task in tasks:
         # Construct the full path for the current file
-        path = "E:/aolabs/aolabs2/ARC-AGI/data/training/" 
+        path = "C:/Users/alebr/Desktop/Engineering/AO/Projects/ARC-AGI/ARC-AGI/data/training/" 
         task_path = path + task
 
         # Open the JSON file and load its content
