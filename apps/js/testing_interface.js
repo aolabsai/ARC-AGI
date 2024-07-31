@@ -8,6 +8,8 @@ var TEST_PAIRS_QSTATE = new Array();
 var CURRENT_TEST_PAIR_INDEX = 0;
 var COPY_PASTE_DATA = new Array();
 var pred_array = new Array();
+var task;
+var currentIndex;
 
 
 // Cosmetic.
@@ -183,6 +185,10 @@ function display_task_name(task_name, task_index, number_of_tasks) {
 }
 
 function loadTaskFromFile(e) {
+    currentIndex = 0;
+    updateIndexValue();
+    document.getElementById('evaluation_predicted_output').innerHTML = '';
+    document.getElementById('evaluation_qstate_output').innerHTML = '';
     var file = e.target.files[0];
     if (!file) {
         errorMsg('No file selected');
@@ -208,64 +214,29 @@ function loadTaskFromFile(e) {
     reader.readAsText(file);
 }
 
+
+
+
+
+
 function randomTask() {
+    currentIndex = 0;
+    updateIndexValue();
+    document.getElementById('evaluation_predicted_output').innerHTML = '';
+    document.getElementById('evaluation_qstate_output').innerHTML = '';
+    
     var subset = "training";
     // Fetch the list of tasks from the GitHub API
+
     $.getJSON("https://api.github.com/repos/fchollet/ARC/contents/data/" + subset, function(tasks) {
         // Select a random task from the list
         var task_index = Math.floor(Math.random() * tasks.length);
-        var task = tasks[task_index];
-        // Send the selected task to the Flask server for processing
-        $.ajax({
-            url: 'http://127.0.0.1:5000/process_task',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ task_name: task['name'] }),
-            success: function(response) {
-                // Parse the server response
-                pred_array = JSON.parse(response.pred_array);
-                console.log(pred_array, 'Hi');
-                console.log(pred_array.length, 'Hi 2');
-                console.log(typeof pred_array, 'Hi 2');
-
-                // Process the prediction array
-                for (var i = 0; i < pred_array.length; i++) {
-                    pair = {};
-                    pair.pred = pred_array[i][4][0];  // important
-                    TEST_PAIRS_PRED.push(pair);
-                }
-
-                // Convert and fill the prediction grid
-                values_pred = TEST_PAIRS_PRED[0]['pred'];
-                CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred);
-                fillTestOutputPred(CURRENT_OUTPUT_PRED_GRID);
-
-                // Process the q state array
-                for (var i = 0; i < pred_array.length; i++) {
-                    pair = {};
-                    pair.qstate = pred_array[i][4][1];  // important
-                    TEST_PAIRS_QSTATE.push(pair);
-                }
-
-                // Convert and fill the question state grid
-                values_qstate = TEST_PAIRS_QSTATE[0]['qstate'];
-                CURRENT_OUTPUT_QSTATE_GRID = convertSerializedGridToGridObject(values_qstate);
-                fillTestOutputQstate(CURRENT_OUTPUT_QSTATE_GRID);
-
-                // Populate dropdown and update output
-                populateDropdown();
-                updateOutput();
-            },
-            error: function() {
-                errorMsg('Error processing task on server');
-            }
-        });
-
+        task = tasks[task_index];  // Set the global task variable
         // Fetch the task details from GitHub and load the task
         $.getJSON(task["download_url"], function(json) {
             try {
-                train = json['train'];
-                test = json['test'];
+                var train = json['train'];
+                var test = json['test'];
             } catch (e) {
                 errorMsg('Bad file format');
                 return;
@@ -273,13 +244,50 @@ function randomTask() {
             loadJSONTask(train, test);
             infoMsg("Loaded task training/" + task["name"]);
             display_task_name(task['name'], task_index, tasks.length);
-        })
-        .error(function(){
+        }).fail(function() {
             errorMsg('Error loading task');
         });
-    })
-    .error(function(){
+    }).fail(function() {
         errorMsg('Error loading task list');
+    });
+}
+
+function runAgent() {
+    if (!task || !task['name']) {
+        errorMsg('No task selected. Please load a task first.');
+        return;
+    }
+
+    // Display the status message
+    document.getElementById('agentStatus').innerText = 'AGENT IS RUNNING...';
+
+    $.ajax({
+        url: 'http://127.0.0.1:5000/process_task',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ task_name: task['name'] }),
+        success: function(response) {
+            try {
+                pred_array = JSON.parse(response.pred_array);
+                console.log(pred_array, 'Hi');
+                console.log(pred_array.length, 'Hi 2');
+                console.log(typeof pred_array, 'Hi 2');
+
+                // Clear the status message
+                document.getElementById('agentStatus').innerText = '';
+
+                updateIndexValue();
+                updateOutput();
+            } catch (e) {
+                errorMsg('Error processing response from server');
+                console.error(e);
+            }
+        },
+        error: function() {
+            errorMsg('Error processing task on server');
+            // Clear the status message
+            document.getElementById('agentStatus').innerText = '';
+        }
     });
 }
 
@@ -291,45 +299,51 @@ function randomTask() {
 
 
 
+currentIndex = 0; // Initial index value
 
-function populateDropdown() {
-    var dropdown = document.getElementById("indexSelector");
-    dropdown.innerHTML = ""; // Clear existing options
+function updateIndexValue() {
+    document.getElementById("indexValue").innerText = currentIndex;
+}
 
-    // Determine the maximum length within pred_array
-    var maxLength = 0;
-    for (var i = 0; i < pred_array.length; i++) {
-        if (pred_array[i].length > maxLength) {
-            maxLength = pred_array[i].length;
-        }
+function increaseIndex() {
+    currentIndex++;
+    updateIndexValue();
+    updateOutput();
+}
+
+function decreaseIndex() {
+    if (currentIndex > 0) { // Ensure the index doesn't go below 0
+        currentIndex--;
     }
-
-    // Generate options based on the maxLength
-    for (var i = 0; i < maxLength; i++) {
-        var option = document.createElement("option");
-        option.value = i;
-        option.text = i;
-        dropdown.appendChild(option);
-    }
+    updateIndexValue();
+    updateOutput();
 }
 
 function updateOutput() {
-    var selectedIndex = document.getElementById("indexSelector").value;
+    var selectedIndex = currentIndex;
     TEST_PAIRS_QSTATE = [];
+    TEST_PAIRS_PRED = [];
 
     for (var i = 0; i < pred_array.length; i++) {
-        if (pred_array[i][selectedIndex] && pred_array[i][selectedIndex][1] !== undefined) {
-            var pair = {};
-            pair.qstate = pred_array[i][selectedIndex][1];  // use selected index here
-            TEST_PAIRS_QSTATE.push(pair);
-            console.log("updated displayed state")
-        }
+        var pair = {};
+        pair.qstate = pred_array[i][selectedIndex][1];  // important
+        TEST_PAIRS_QSTATE.push(pair);
+    }
+
+    for (var i = 0; i < pred_array.length; i++) {
+        var pair = {};
+        pair.pred = pred_array[i][selectedIndex][0];  // important
+        TEST_PAIRS_PRED.push(pair);
     }
 
     if (TEST_PAIRS_QSTATE.length > 0) {
         var values_qstate = TEST_PAIRS_QSTATE[0]['qstate'];
         var CURRENT_OUTPUT_QSTATE_GRID = convertSerializedGridToGridObject(values_qstate);
         fillTestOutputQstate(CURRENT_OUTPUT_QSTATE_GRID);
+
+        var values_pred = TEST_PAIRS_PRED[0]['pred'];
+        CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred);
+        fillTestOutputPred(CURRENT_OUTPUT_PRED_GRID);
     } else {
         console.log("No valid qstate found for the selected index.");
     }
