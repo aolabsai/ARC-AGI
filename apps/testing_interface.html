@@ -22,7 +22,7 @@
                 <br />
                 <input type="file" class="load_task"/>
                 <button onclick="randomTask()" id="random_task_btn">Random task</button>
-                <button onclick="runAgent()" id="run_ao_agent">Run Agent</button>
+                <!-- <button onclick="runAgent()" id="run_ao_agent">Run Agent</button> -->
             </div>
         </div>
         <div id="workspace">
@@ -36,7 +36,7 @@
 
                 <div id="evaluation-input-view">
                     <div class="text">Test input grid <span id="current_test_input_id_display">0</span>/<span id="total_test_input_count_display">0</span>
-                        <button onclick="nextTestInput()">Next test</button>
+                        <button onclick="nextTestInput()">Next test input</button>
                         <button onclick="previousTestInput()">Previous test</button>
                     </div>
 
@@ -55,8 +55,9 @@
                         <input type="file" id="load_task_file_input" class="load_task" style="display: none;"/>
                         <input type="button" value="Browse..." onclick="document.getElementById('load_task_file_input').click();" />
                         <button onclick="randomTask()" id="random_task_btn"> Random... </button>
+                        <button onclick="runAgent()"> Run Agent </button>
                         <p>
-                        <label id='task_name' for="random_task_btn"> Task name: </label>
+                        <label id='task_name'> Task name: </label>
                         <p>
                         <label for="show_symbol_numbers">Show symbol numbers: </label>
                         <input type="checkbox" id="show_symbol_numbers" name="show_symbol_numbers"
@@ -78,6 +79,9 @@
                             <button onclick="submitSolution()" id="submit_solution_btn">Submit!</button> 
                             
                         </div>
+
+                        <div id="agentStatus" style="color: red; font-weight: bold;"></div>
+
 
                         <div id="output_grid">
                             <!-- <div class="edition_grid selectable_grid">
@@ -105,10 +109,16 @@
                             <div id="evaluation_qstate_output" class="selectable_grid" ></div>
 
 
-                            <div class="text2">
+                            <!-- <div class="text2">
                             <select id="indexSelector"></select>
                             <button onclick="updateOutput()">Select state</button>
-                        </div>
+                            </div> -->
+
+                            <div class="text2">
+                                <button id="decreaseIndex" onclick="decreaseIndex()">-</button>
+                                <span id="indexValue"> 0</span>
+                                <button id="increaseIndex" onclick="increaseIndex()">+</button>
+                            </div>
 
                         </div>
 
