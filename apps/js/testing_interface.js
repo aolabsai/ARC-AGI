@@ -10,6 +10,8 @@ var COPY_PASTE_DATA = new Array();
 var pred_array = new Array();
 var task;
 var currentIndex;
+var train;
+var test;
 
 
 // Cosmetic.
@@ -200,6 +202,7 @@ function loadTaskFromFile(e) {
 
         try {
             contents = JSON.parse(contents);
+            task = { "name": file.name, "contents": contents }; // Update global task variable
             train = contents['train'];
             test = contents['test'];
         } catch (e) {
@@ -209,7 +212,8 @@ function loadTaskFromFile(e) {
         loadJSONTask(train, test);
 
         $('#load_task_file_input')[0].value = "";
-        display_task_name(file.name, null, null);
+        infoMsg("Loaded task training/" + task["name"]);
+        display_task_name(task['name']);
     };
     reader.readAsText(file);
 }
@@ -235,8 +239,8 @@ function randomTask() {
         // Fetch the task details from GitHub and load the task
         $.getJSON(task["download_url"], function(json) {
             try {
-                var train = json['train'];
-                var test = json['test'];
+                train = json['train'];
+                test = json['test'];
             } catch (e) {
                 errorMsg('Bad file format');
                 return;
@@ -385,19 +389,23 @@ function nextTestInput() {
 
 
 function previousTestInput() {
-    if (TEST_PAIRS.length >= CURRENT_TEST_PAIR_INDEX + 1) {
-        errorMsg('No previous test input. Pick another file?')
-        return
+    if (CURRENT_TEST_PAIR_INDEX <= 0) {
+        errorMsg('No previous test input. Pick another file?');
+        return;
     }
+    // if (TEST_PAIRS.length >= CURRENT_TEST_PAIR_INDEX + 1) {
+    //     errorMsg('No previous test input. Pick another file?')
+    //     return
+    // }
     CURRENT_TEST_PAIR_INDEX -= 1;
     values = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['input'];
     values_o = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['output'];
     values_pred = TEST_PAIRS_PRED[CURRENT_TEST_PAIR_INDEX]['pred'];
     values_qstate = TEST_PAIRS_QSTATE[CURRENT_TEST_PAIR_INDEX]['qstate'];
-    CURRENT_INPUT_GRID = convertSerializedGridToGridObject(values)
-    CURRENT_OUTPUT_GRID = convertSerializedGridToGridObject(values_o)
-    CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred)
-    CURRENT_OUTPUT_QSTATE_GRID = convertSerializedGridToGridObject(values_qstate)
+    CURRENT_INPUT_GRID = convertSerializedGridToGridObject(values);
+    CURRENT_OUTPUT_GRID = convertSerializedGridToGridObject(values_o);
+    CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred);
+    CURRENT_OUTPUT_QSTATE_GRID = convertSerializedGridToGridObject(values_qstate);
     fillTestInput(CURRENT_INPUT_GRID);
     fillTestOutput(CURRENT_OUTPUT_GRID);
     fillTestOutputPred(CURRENT_OUTPUT_PRED_GRID);
@@ -406,6 +414,7 @@ function previousTestInput() {
     $('#current_test_input_id_display').html(CURRENT_TEST_PAIR_INDEX + 1);
     $('#total_test_input_count_display').html(test.length);
 }
+
 
 
 
