@@ -5,13 +5,14 @@ import random
 
 # assumes an available local installation of ao_core; refer to https://github.com/aolabsai/ao_core?tab=readme-ov-file#installing-ao_core
 import ao_core as ao
-neurons_x = 6 #its a global variable for number of neurons 
-neurons_y = 3
+neurons_x = 30 #its a global variable for number of neurons 
+neurons_y = 30
 description = "ARC Agent"      #    MNIST is in grayscale, which we downscaled to B&W for the simple 28x28 neuron count -- 788 = 28x28 + 4
 arch_i = [neurons_x*neurons_y * 4]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
 arch_z = [neurons_x*neurons_y * 4]                   # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
 arch_c = []
 connector_function = "full_conn"
+# connector_function = "rand_conn"
 # connector_parameters = [1200, 1200, 1200, 1200]
 # so all Q neurons are connected randomly to 1200 I and 1200 neighbor Q
 # and all Z neurons are connected randomly to 784 Q and 4 (or all) neighbor Z
@@ -143,9 +144,15 @@ def depad_ARC(arr, pad_value=10):
 files = os.listdir(path)
 
 # Randomly sample 10 files from the list
-tasks = random.sample(files, 1)  # Picking 10 random files from the training folder
+# tasks = random.sample(files, 10)  # Picking 10 random files from the training folder
 
-tasks = ['c9e6f938.json']
+tasks = ['aedd82e4.json']
+# tasks = ['a85d4709.json'] - 3x3
+# tasks = ['3c9b0459.json']
+# tasks = ['445eab21.json']
+# tasks = ['d22278a0.json'] # very interesting
+# tasks = ['d631b094.json']
+
 
 # Process each sampled file
 for task in tasks:
@@ -195,11 +202,11 @@ for task in tasks:
         onp_binary = ARC_to_binary(onp_padded)
 
         # Run the arcAgent multiple times for prediction
-        for run in range(10):
+        for run in range(5):
             # Get the next state of the arcAgent
-            arcAgent.next_state(inp_binary)
+            arcAgent.next_state(inp_binary, DD=True)
             z_index = arcAgent.arch.Z__flat  # Get the current index from the architecture
-            s = arcAgent.state - 1  # Get the state index
+            s = arcAgent.state - 1 # Get the state index
             response = arcAgent.story[s, z_index]  # Get the response from the story
 
         # Convert the binary response back to array format
@@ -211,6 +218,29 @@ for task in tasks:
         # Get the shapes of the actual and predicted output arrays
         actual_op_size = onp.shape
         pred_op_size = arr_op.shape
+
+        q_index = arcAgent.arch.Q__flat  # Get the current index from the architecture
+        q_response = arcAgent.story[s, q_index]  # Get the response from the story
+
+        # Convert the binary response back to array format
+        q_arr_op_pad = binary_to_ARC(q_response)
+        # Remove padding from the predicted output array
+        q_arr_op = depad_ARC(q_arr_op_pad)
+
+        q1_response = arcAgent.story[s-1, q_index]  # Get the response from the story
+        q1_arr_op_pad = binary_to_ARC(q1_response)
+        q1_arr_op = depad_ARC(q1_arr_op_pad)
+
+        print("")
+        print("")
+        print("")
+
+        print("NEW TEST:::::::: "+task)
+        print("")
+
+        print("Q state: ")
+        print(q1_arr_op)
+        print(q_arr_op)
 
         # Print the predicted and actual output arrays
         print("Predicted output: ")
@@ -233,6 +263,3 @@ for task in tasks:
                 break
             else:
                 print("Correct output")
-
-
-    

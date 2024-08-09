@@ -134,12 +134,24 @@ input, button {
 }
 
 .text {
+    
     text-align: center;
     background: white;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-bottom: 10px;
 }
+
+.text2 {
+    text-align: center;
+    background: white;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    display: block; /* Ensure it behaves like a block element */
+    clear: both; /* Ensure it clears any floats */
+}
+
 
 #task_demo_header {
     margin: 10px;
