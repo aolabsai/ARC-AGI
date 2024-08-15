@@ -1,17 +1,9 @@
+#importing useful modules 
 import numpy as np
 import json
 import os
 import random
-
-# assumes an available local installation of ao_core; refer to https://github.com/aolabsai/ao_core?tab=readme-ov-file#installing-ao_core
 import ao_core as ao
-
-  
-
-# To maintain compatability with our API, do not change the variable name "Arch" or the constructor class "ao.Arch" in the line below (the API is pre-loaded with a version of the Arch class in this repo's main branch, hence "ao.Arch")
-
-
-
 
 
 ##padding function
