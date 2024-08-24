@@ -5,8 +5,8 @@ import random
 
 # assumes an available local installation of ao_core; refer to https://github.com/aolabsai/ao_core?tab=readme-ov-file#installing-ao_core
 import ao_core as ao
-neurons_x = 10 #its a global variable for number of neurons 
-neurons_y = 10
+neurons_x = 30 #its a global variable for number of neurons 
+neurons_y = 30
 description = "ARC Agent"      #    MNIST is in grayscale, which we downscaled to B&W for the simple 28x28 neuron count -- 788 = 28x28 + 4
 arch_i = [4 for x in range(neurons_x*neurons_y)]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
 arch_z = [4 for x in range(neurons_x*neurons_y)]                    # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
