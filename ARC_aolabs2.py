@@ -5,21 +5,19 @@ import random
 
 # assumes an available local installation of ao_core; refer to https://github.com/aolabsai/ao_core?tab=readme-ov-file#installing-ao_core
 import ao_core as ao
-neurons_x = 30 #its a global variable for number of neurons 
-
-neurons_y = 30
+neurons_x = 10 #its a global variable for number of neurons 
+neurons_y = 10
 description = "ARC Agent"      #    MNIST is in grayscale, which we downscaled to B&W for the simple 28x28 neuron count -- 788 = 28x28 + 4
-arch_i = [neurons_x*neurons_y * 4]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
-arch_z = [neurons_x*neurons_y * 4]                   # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
+arch_i = [4 for x in range(neurons_x*neurons_y)]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
+arch_z = [4 for x in range(neurons_x*neurons_y)]                    # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
 arch_c = []
-connector_function = "full_conn"
-# connector_function = "rand_conn"
-# connector_parameters = [1200, 1200, 1200, 1200]
-# so all Q neurons are connected randomly to 1200 I and 1200 neighbor Q
-# and all Z neurons are connected randomly to 784 Q and 4 (or all) neighbor Z
+connector_function = "nearest_neighbour_conn"
+
+Z2I_connections = True
+connector_parameters = [4, 4, neurons_x, neurons_y, Z2I_connections]  #ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
 
 # To maintain compatability with our API, do not change the variable name "Arch" or the constructor class "ao.Arch" in the line below (the API is pre-loaded with a version of the Arch class in this repo's main branch, hence "ao.Arch")
-arcArch = ao.Arch(arch_i, arch_z, arch_c, connector_function, description)
+arcArch = ao.Arch(arch_i, arch_z, arch_c, connector_function, description, connector_parameters)
 arcAgent = ao.Agent( arcArch )
 
 
@@ -142,8 +140,9 @@ def depad_ARC(arr, pad_value=10):
 def ARC_main(tasks):
     Data = []
     for task in tasks:
+        print('Training going on for task..', task)
         # Construct the full path for the current file
-        path = "C:/Users/alebr/Desktop/Engineering/AO/Projects/ARC-AGI/ARC-AGI/data/training/" 
+        path = "E:/aolabs/aolabs2/ARC-AGI/data/training/" 
         task_path = path + task
 
         # Open the JSON file and load its content
@@ -197,7 +196,7 @@ def ARC_main(tasks):
                 q_index = arcAgent.arch.Q__flat
                 s = arcAgent.state - 1  # Get the state index
                 
-                print('S:', s)
+                # print('S:', s)
                 # print(z_index[166])
                 response = arcAgent.story[s, z_index]  # Get the response from the story
                 response_q = arcAgent.story[s, q_index]
@@ -210,7 +209,9 @@ def ARC_main(tasks):
 
             file_data.append(test_data)
 
-        Data.append(file_data)    
+        Data.append(file_data)   
+        print('Training Done for Task ', task) 
+        
 
     return Data   
 
