@@ -11,6 +11,7 @@ CORS(app)
 
 @app.route('/process_task', methods=['POST'])
 def process_task():
+    print('Loading in process...')
     data = request.json
     task_name = data['task_name']
     tasks = []
@@ -21,13 +22,18 @@ def process_task():
     
 
     pred_array = Data[0]
-    
+    # pred_array = pred_array.tolist()
     pred_array = json.dumps(pred_array)
-    print('trainin Done')
+    # pred_array = []
+    # for pair in test_data['test']:
+    #     onp = (pair['output'])
+    #     pred_array.append(onp)
        
-   
+    print('Done.')
     return jsonify(pred_array=pred_array)
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
 
