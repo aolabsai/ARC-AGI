@@ -142,7 +142,7 @@ def ARC_main(tasks):
     for task in tasks:
         print('Training going on for task..', task)
         # Construct the full path for the current file
-        path = "E:/aolabs/aolabs2/ARC-AGI/data/training/" 
+        path = "data/training/" 
         task_path = path + task
 
         # Open the JSON file and load its content
