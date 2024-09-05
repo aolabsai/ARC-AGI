@@ -5,19 +5,9 @@ import random
 
 # assumes an available local installation of ao_core; refer to https://github.com/aolabsai/ao_core?tab=readme-ov-file#installing-ao_core
 import ao_core as ao
-neurons_x = 30 #its a global variable for number of neurons 
-neurons_y = 30
-description = "ARC Agent"      #    MNIST is in grayscale, which we downscaled to B&W for the simple 28x28 neuron count -- 788 = 28x28 + 4
-arch_i = [4 for x in range(neurons_x*neurons_y)]               # note that the 784 I neurons are in 1 input channel; MNIST is like a single channel clam, so it's limitations are obvious from the prespective of our approach, more on this here: 
-arch_z = [4 for x in range(neurons_x*neurons_y)]                    # 4 neurons in 1 channel as 4 binary digits encodes up to integer 16, and only 10 (0-9) are needed for MNIST
-arch_c = []
-connector_function = "nearest_neighbour_conn"
+from arch_ARC import arcArch
 
-Z2I_connections = True
-connector_parameters = [4, 4, neurons_x, neurons_y, Z2I_connections]  #ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
 
-# To maintain compatability with our API, do not change the variable name "Arch" or the constructor class "ao.Arch" in the line below (the API is pre-loaded with a version of the Arch class in this repo's main branch, hence "ao.Arch")
-arcArch = ao.Arch(arch_i, arch_z, arch_c, connector_function, description, connector_parameters)
 arcAgent = ao.Agent( arcArch )
 
 
