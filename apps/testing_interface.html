@@ -20,8 +20,10 @@
             <div id="modal">
                 <div>Welcome to the ARC testing interface. <br /> Choose a task file to start, or click on "Random task" to load one from the ARC project on GitHub.</div>
                 <br />
-                <input type="file" class="load_task"/>
+                <input type="file" id="load_task_file_input" class="load_task" style="display: none;"/>
+                <input type="button" value="Browse..." onclick="document.getElementById('load_task_file_input').click();" />
                 <button onclick="randomTask()" id="random_task_btn">Random task</button>
+                <!-- <button onclick="runAgent()" id="run_ao_agent">Run Agent</button> -->
             </div>
         </div>
         <div id="workspace">
@@ -35,11 +37,17 @@
 
                 <div id="evaluation-input-view">
                     <div class="text">Test input grid <span id="current_test_input_id_display">0</span>/<span id="total_test_input_count_display">0</span>
-                        <button onclick="nextTestInput()">Next test input</button>
+                        <button onclick="nextTestInput()">Next test</button>
+                        <button onclick="previousTestInput()">Previous test</button>
                     </div>
 
                     <div id="evaluation_input" class="selectable_grid"></div>
+                    
+                    <div class="text2">Test output grid </div>
+                    <div id="evaluation_output" class="selectable_grid"></div>
                 </div>
+
+            
 
                 <div id="evaluation_output_editor">
 
@@ -48,8 +56,9 @@
                         <input type="file" id="load_task_file_input" class="load_task" style="display: none;"/>
                         <input type="button" value="Browse..." onclick="document.getElementById('load_task_file_input').click();" />
                         <button onclick="randomTask()" id="random_task_btn"> Random... </button>
+                        <button onclick="runAgent()"> Run Agent </button>
                         <p>
-                        <label id='task_name' for="random_task_btn"> Task name: </label>
+                        <label id='task_name'> Task name: </label>
                         <p>
                         <label for="show_symbol_numbers">Show symbol numbers: </label>
                         <input type="checkbox" id="show_symbol_numbers" name="show_symbol_numbers"
@@ -59,18 +68,24 @@
                     <div id="edition_view">
                         <div id="editor_grid_control_btns">
                             <div id="resize_control_btns">
-                                <label for="output_grid_size">Change grid size: </label>
-                                <input type="text" id="output_grid_size" class="grid_size_field" name="size" value="3x3">
-                                <button onclick="resizeOutputGrid()" id="resize_btn">Resize</button>
+                                
+                                <input type="text" id="output_grid_size" class="grid_size_field" name="size" value="3x3" style="width: 0px; height: 0px;">
+                                
+                                <!-- <div id="evaluation_output" class="selectable_grid"></div> -->
+                                
                             </div>
 
-                            <button onclick="copyFromInput()">Copy from input</button>
-                            <button onclick="resetOutputGrid()">Reset grid</button>
-                            <button onclick="submitSolution()" id="submit_solution_btn">Submit!</button>
+                            <!-- <button onclick="copyFromInput()">Copy from input</button>
+                            <button onclick="resetOutputGrid()">Reset grid</button> -->
+                            <button onclick="submitSolution()" id="submit_solution_btn">Submit!</button> 
+                            
                         </div>
 
+                        <div id="agentStatus" style="color: red; font-weight: bold;"></div>
+
+
                         <div id="output_grid">
-                            <div class="edition_grid selectable_grid">
+                            <!-- <div class="edition_grid selectable_grid">
                                 <div class="row">
                                     <div class="cell" symbol="0" x="0" y="0"></div>
                                     <div class="cell" symbol="0" x="0" y="1"></div>
@@ -86,11 +101,30 @@
                                     <div class="cell" symbol="0" x="2" y="1"></div>
                                     <div class="cell" symbol="0" x="2" y="2"></div>
                                 </div>
+                            </div> -->
+                            <div class="text2">Test predicted output grid </div>
+                            <div id="evaluation_predicted_output" class="selectable_grid" ></div>
+                           
+
+                            <div class="text2">Q state </div>
+                            <div id="evaluation_qstate_output" class="selectable_grid" ></div>
+
+
+                            <!-- <div class="text2">
+                            <select id="indexSelector"></select>
+                            <button onclick="updateOutput()">Select state</button>
+                            </div> -->
+
+                            <div class="text2">
+                                <button id="decreaseIndex" onclick="decreaseIndex()">-</button>
+                                <span id="indexValue"> 0</span>
+                                <button id="increaseIndex" onclick="increaseIndex()">+</button>
                             </div>
+
                         </div>
 
 
-                        <div id="toolbar">
+                        <!-- <div id="toolbar">
                             <div>
                                 <input type="radio" id="tool_edit"
                                  name="tool_switching" value="edit" checked>
@@ -104,9 +138,9 @@
                                  name="tool_switching" value="floodfill">
                                 <label for="tool_floodfill">Flood fill</label>
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div id="symbol_picker">
+                        <!-- <div id="symbol_picker">
                             <div class="symbol_preview symbol_0 selected-symbol-preview" symbol="0"></div>
                             <div class="symbol_preview symbol_1" symbol="1"></div>
                             <div class="symbol_preview symbol_2" symbol="2"></div>
@@ -117,7 +151,7 @@
                             <div class="symbol_preview symbol_7" symbol="7"></div>
                             <div class="symbol_preview symbol_8" symbol="8"></div>
                             <div class="symbol_preview symbol_9" symbol="9"></div>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div id="error_display"></div>

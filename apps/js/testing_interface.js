@@ -3,8 +3,16 @@
 var CURRENT_INPUT_GRID = new Grid(3, 3);
 var CURRENT_OUTPUT_GRID = new Grid(3, 3);
 var TEST_PAIRS = new Array();
+var TEST_PAIRS_PRED = new Array();
+var TEST_PAIRS_QSTATE = new Array();
 var CURRENT_TEST_PAIR_INDEX = 0;
 var COPY_PASTE_DATA = new Array();
+var pred_array = new Array();
+var task;
+var currentIndex;
+var train;
+var test;
+
 
 // Cosmetic.
 var EDITION_GRID_HEIGHT = 500;
@@ -15,6 +23,8 @@ var MAX_CELL_SIZE = 100;
 function resetTask() {
     CURRENT_INPUT_GRID = new Grid(3, 3);
     TEST_PAIRS = new Array();
+    TEST_PAIRS_PRED = new Array();
+    TEST_PAIRS_QSTATE = new Array();
     CURRENT_TEST_PAIR_INDEX = 0;
     $('#task_preview').html('');
     resetOutputGrid();
@@ -128,10 +138,39 @@ function loadJSONTask(train, test) {
     for (var i=0; i < test.length; i++) {
         pair = test[i];
         TEST_PAIRS.push(pair);
+        // console.log(typeof pair);
+        
     }
+
+    // for (var i=0; i < test.length; i++) {
+    //     pair = test[i];
+    //     pair.pred = pred_array[i][4][0];  // important
+    //     TEST_PAIRS_PRED.push(pair);
+    //     // console.log(typeof pair);
+        
+    // }
+
+    // console.log(TEST_PAIRS)
+    // console.log(TEST_PAIRS_PRED)
+
+   
     values = TEST_PAIRS[0]['input'];
     CURRENT_INPUT_GRID = convertSerializedGridToGridObject(values)
     fillTestInput(CURRENT_INPUT_GRID);
+
+
+    values_o = TEST_PAIRS[0]['output'];
+    CURRENT_OUTPUT_GRID = convertSerializedGridToGridObject(values_o)
+    fillTestOutput(CURRENT_OUTPUT_GRID);
+
+    
+    // values_pred = TEST_PAIRS_PRED[0]['pred'];
+    // CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred)
+    // fillTestOutputPred(CURRENT_OUTPUT_PRED_GRID);
+
+
+
+
     CURRENT_TEST_PAIR_INDEX = 0;
     $('#current_test_input_id_display').html('1');
     $('#total_test_input_count_display').html(test.length);
@@ -148,6 +187,10 @@ function display_task_name(task_name, task_index, number_of_tasks) {
 }
 
 function loadTaskFromFile(e) {
+    currentIndex = 0;
+    updateIndexValue();
+    document.getElementById('evaluation_predicted_output').innerHTML = '';
+    document.getElementById('evaluation_qstate_output').innerHTML = '';
     var file = e.target.files[0];
     if (!file) {
         errorMsg('No file selected');
@@ -159,6 +202,7 @@ function loadTaskFromFile(e) {
 
         try {
             contents = JSON.parse(contents);
+            task = { "name": file.name, "contents": contents }; // Update global task variable
             train = contents['train'];
             test = contents['test'];
         } catch (e) {
@@ -168,16 +212,31 @@ function loadTaskFromFile(e) {
         loadJSONTask(train, test);
 
         $('#load_task_file_input')[0].value = "";
-        display_task_name(file.name, null, null);
+        infoMsg("Loaded task training/" + task["name"]);
+        display_task_name(task['name']);
     };
     reader.readAsText(file);
 }
 
+
+
+
+
+
 function randomTask() {
+    currentIndex = 0;
+    updateIndexValue();
+    document.getElementById('evaluation_predicted_output').innerHTML = '';
+    document.getElementById('evaluation_qstate_output').innerHTML = '';
+    
     var subset = "training";
+    // Fetch the list of tasks from the GitHub API
+
     $.getJSON("https://api.github.com/repos/fchollet/ARC/contents/data/" + subset, function(tasks) {
-        var task_index = Math.floor(Math.random() * tasks.length)
-        var task = tasks[task_index];
+        // Select a random task from the list
+        var task_index = Math.floor(Math.random() * tasks.length);
+        task = tasks[task_index];  // Set the global task variable
+        // Fetch the task details from GitHub and load the task
         $.getJSON(task["download_url"], function(json) {
             try {
                 train = json['train'];
@@ -187,18 +246,123 @@ function randomTask() {
                 return;
             }
             loadJSONTask(train, test);
-            //$('#load_task_file_input')[0].value = "";
             infoMsg("Loaded task training/" + task["name"]);
             display_task_name(task['name'], task_index, tasks.length);
-        })
-        .error(function(){
-          errorMsg('Error loading task');
+        }).fail(function() {
+            errorMsg('Error loading task');
         });
-    })
-    .error(function(){
-      errorMsg('Error loading task list');
+    }).fail(function() {
+        errorMsg('Error loading task list');
     });
 }
+
+function runAgent() {
+    if (!task || !task['name']) {
+        errorMsg('No task selected. Please load a task first.');
+        return;
+    }
+
+    // Display the status message
+    document.getElementById('agentStatus').innerText = 'AGENT IS RUNNING...';
+
+    $.ajax({
+        url: 'http://127.0.0.1:5000/process_task',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ task_name: task['name'] }),
+        success: function(response) {
+            try {
+                pred_array = JSON.parse(response.pred_array);
+                console.log(pred_array, 'Hi');
+                console.log(pred_array.length, 'Hi 2');
+                console.log(typeof pred_array, 'Hi 2');
+
+                // Clear the status message
+                document.getElementById('agentStatus').innerText = '';
+
+                updateIndexValue();
+                updateOutput();
+            } catch (e) {
+                errorMsg('Error processing response from server');
+                console.error(e);
+            }
+        },
+        error: function() {
+            errorMsg('Error processing task on server');
+            // Clear the status message
+            document.getElementById('agentStatus').innerText = '';
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+currentIndex = 0; // Initial index value
+
+function updateIndexValue() {
+    document.getElementById("indexValue").innerText = currentIndex;
+}
+
+function increaseIndex() {
+    currentIndex++;
+    updateIndexValue();
+    updateOutput();
+}
+
+function decreaseIndex() {
+    if (currentIndex > 0) { // Ensure the index doesn't go below 0
+        currentIndex--;
+    }
+    updateIndexValue();
+    updateOutput();
+}
+
+function updateOutput() {
+    var selectedIndex = currentIndex;
+    TEST_PAIRS_QSTATE = [];
+    TEST_PAIRS_PRED = [];
+
+    for (var i = 0; i < pred_array.length; i++) {
+        var pair = {};
+        pair.qstate = pred_array[i][selectedIndex][1];  // important
+        TEST_PAIRS_QSTATE.push(pair);
+    }
+
+    for (var i = 0; i < pred_array.length; i++) {
+        var pair = {};
+        pair.pred = pred_array[i][selectedIndex][0];  // important
+        TEST_PAIRS_PRED.push(pair);
+    }
+
+    if (TEST_PAIRS_QSTATE.length > 0) {
+        var values_qstate = TEST_PAIRS_QSTATE[0]['qstate'];
+        var CURRENT_OUTPUT_QSTATE_GRID = convertSerializedGridToGridObject(values_qstate);
+        fillTestOutputQstate(CURRENT_OUTPUT_QSTATE_GRID);
+
+        var values_pred = TEST_PAIRS_PRED[0]['pred'];
+        CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred);
+        fillTestOutputPred(CURRENT_OUTPUT_PRED_GRID);
+    } else {
+        console.log("No valid qstate found for the selected index.");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 function nextTestInput() {
     if (TEST_PAIRS.length <= CURRENT_TEST_PAIR_INDEX + 1) {
@@ -207,16 +371,57 @@ function nextTestInput() {
     }
     CURRENT_TEST_PAIR_INDEX += 1;
     values = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['input'];
+    values_o = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['output'];
+    values_pred = TEST_PAIRS_PRED[CURRENT_TEST_PAIR_INDEX]['pred'];
+    values_qstate = TEST_PAIRS_QSTATE[CURRENT_TEST_PAIR_INDEX]['qstate'];
     CURRENT_INPUT_GRID = convertSerializedGridToGridObject(values)
+    CURRENT_OUTPUT_GRID = convertSerializedGridToGridObject(values_o)
+    CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred)
+    CURRENT_OUTPUT_QSTATE_GRID = convertSerializedGridToGridObject(values_qstate)
     fillTestInput(CURRENT_INPUT_GRID);
+    fillTestOutput(CURRENT_OUTPUT_GRID);
+    fillTestOutputPred(CURRENT_OUTPUT_PRED_GRID);
+    fillTestOutputQstate(CURRENT_OUTPUT_QSTATE_GRID);
+
     $('#current_test_input_id_display').html(CURRENT_TEST_PAIR_INDEX + 1);
     $('#total_test_input_count_display').html(test.length);
 }
 
+
+function previousTestInput() {
+    if (CURRENT_TEST_PAIR_INDEX <= 0) {
+        errorMsg('No previous test input. Pick another file?');
+        return;
+    }
+    // if (TEST_PAIRS.length >= CURRENT_TEST_PAIR_INDEX + 1) {
+    //     errorMsg('No previous test input. Pick another file?')
+    //     return
+    // }
+    CURRENT_TEST_PAIR_INDEX -= 1;
+    values = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['input'];
+    values_o = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['output'];
+    values_pred = TEST_PAIRS_PRED[CURRENT_TEST_PAIR_INDEX]['pred'];
+    values_qstate = TEST_PAIRS_QSTATE[CURRENT_TEST_PAIR_INDEX]['qstate'];
+    CURRENT_INPUT_GRID = convertSerializedGridToGridObject(values);
+    CURRENT_OUTPUT_GRID = convertSerializedGridToGridObject(values_o);
+    CURRENT_OUTPUT_PRED_GRID = convertSerializedGridToGridObject(values_pred);
+    CURRENT_OUTPUT_QSTATE_GRID = convertSerializedGridToGridObject(values_qstate);
+    fillTestInput(CURRENT_INPUT_GRID);
+    fillTestOutput(CURRENT_OUTPUT_GRID);
+    fillTestOutputPred(CURRENT_OUTPUT_PRED_GRID);
+    fillTestOutputQstate(CURRENT_OUTPUT_QSTATE_GRID);
+
+    $('#current_test_input_id_display').html(CURRENT_TEST_PAIR_INDEX + 1);
+    $('#total_test_input_count_display').html(test.length);
+}
+
+
+
+
 function submitSolution() {
     syncFromEditionGridToDataGrid();
     reference_output = TEST_PAIRS[CURRENT_TEST_PAIR_INDEX]['output'];
-    submitted_output = CURRENT_OUTPUT_GRID.grid;
+    submitted_output = CURRENT_OUTPUT_PRED_GRID.grid;
     if (reference_output.length != submitted_output.length) {
         errorMsg('Wrong solution.');
         return
@@ -238,6 +443,26 @@ function fillTestInput(inputGrid) {
     jqInputGrid = $('#evaluation_input');
     fillJqGridWithData(jqInputGrid, inputGrid);
     fitCellsToContainer(jqInputGrid, inputGrid.height, inputGrid.width, 400, 400);
+}
+
+function fillTestOutput(outputGrid) {
+    jqOutputGrid = $('#evaluation_output');
+    fillJqGridWithData(jqOutputGrid, outputGrid);
+    fitCellsToContainer(jqOutputGrid, outputGrid.height, outputGrid.width, 400, 400);
+}
+
+function fillTestOutputPred(outputPredGrid) {
+    jqOutputPredGrid = $('#evaluation_predicted_output');
+    fillJqGridWithData(jqOutputPredGrid, outputPredGrid);
+    fitCellsToContainer(jqOutputPredGrid, outputPredGrid.height, outputPredGrid.width, 400, 400);
+    
+}
+
+function fillTestOutputQstate(outputQstateGrid) {
+    jqOutputQstateGrid = $('#evaluation_qstate_output');
+    fillJqGridWithData(jqOutputQstateGrid, outputQstateGrid);
+    fitCellsToContainer(jqOutputQstateGrid, outputQstateGrid.height, outputQstateGrid.width, 400, 400);
+    
 }
 
 function copyToOutput() {
