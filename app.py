@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 import json
-from ARC_aolabs2 import ARC_main
-
+from ARC_functions import ARC_main  # the main function which takes task as argument and returns final predictions matrices. 
+ 
 
 
 app = Flask(__name__)
