@@ -1,3 +1,8 @@
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 # Abstraction and Reasoning Corpus for Artificial General Intelligence (ARC-AGI)
 
 This repository contains the ARC-AGI task data, as well as a browser-based interface for humans to try their hand at solving the tasks manually.
