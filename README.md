@@ -8,6 +8,21 @@
 The ARC challenge is to create an AI that can solve different kinds of visual puzzles. These puzzles require the AI to think abstractly and generalize its understanding based on limited training examples. The goal is to build an AI that can figure out and apply logical rules to solve new puzzles it hasn't seen before.
 
 
+## Installation
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/aolabsai/ARC-AGI
+   cd ARC-AGI
+   ```
+2. **Create and activate a Python virtual environment**
+
+   ```bash
+   python -m venv myenv
+   \myenv\Scripts\activate
+   ```
+   
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
