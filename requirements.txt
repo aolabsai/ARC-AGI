@@ -3,5 +3,5 @@ flask-cors
 numpy
 
 # AO modules
-git+https://github.com/aolabsai/ao_core
-git+https://github.com/aolabsai/ao_arch
+# git+https://github.com/aolabsai/ao_core
+# git+https://github.com/aolabsai/ao_arch
