@@ -1,6 +1,9 @@
+# ARC-AGI aolabs agent
+Author & maintainer: [kushagra7777](https://github.com/Kushagra7777), [kushagra@aolabs.ai]
+Description: ARC is a general AI benchmark and here at AO Labs we are trying to solve it with weight less neural network (WNN) architecture which is a different approach than deep learning. 
+
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-****************************************************************************************************************************************************************
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
