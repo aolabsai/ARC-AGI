@@ -5,7 +5,7 @@
 
 ## Introduction
 
-The ARC problem stetement is to build a AI which can solve a variety of visual puzzles that involve abstract reasoning and generalization. The challenge is to build a AI which doesn't get limited samples to train on and develops a logic based approach to tackle test puzzle. 
+The ARC challenge is to create an AI that can solve different kinds of visual puzzles. These puzzles require the AI to think abstractly and generalize its understanding based on limited training examples. The goal is to build an AI that can figure out and apply logical rules to solve new puzzles it hasn't seen before.
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
