@@ -6,6 +6,8 @@
 ## Introduction
 
 The ARC problem stetement is to build a AI which can solve a variety of visual puzzles that involve abstract reasoning and generalization. The challenge is to build a AI which doesn't get limited samples to train on and develops a logic based approach to tackle test puzzle. 
+
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
