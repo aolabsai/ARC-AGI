@@ -1,35 +1,47 @@
+# ao_app/Dockerfile
+
+# First, build this container by running the 2 commands below in a Git Bash terminal:
+# $ export DOCKER_BUILDKIT=1
+# $ docker build --secret id=env,src=.env -t "ao_app" .
+
+# Then, run the container with this command:
+# $ docker run -p 8501:8501 "ao_app"
+
+# You can then access your app at: http://localhost:8501/
+
+
 FROM python:3.12-slim
 
+# Create a directory for the app in the container
 WORKDIR /app
 
-# Install dependencies for building and compiling packages
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    software-properties-common \
-    git \
-    openssh-client \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
 
-# Setup SSH known hosts for secure GitHub connections
-RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+# Install git and other necessary packages
+RUN apt-get update && \
+    apt-get install -y git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Mount the SSH agent to install from private repos securely
-RUN --mount=type=ssh \
-    pip install git+ssh://git@github.com/aolabsai/ao_core.git \
-                git+git://github.com/aolabsai/ao_arch.git 
-
-# Copy project files into the container
+# Copy the app code including the requirements file 
 COPY . /app
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies from the requirements file
+RUN pip install -r requirements.txt
 
-# Expose the Flask app port
+# Install AO modules, ao_core and ao_arch
+#    Notes: - ao_core is a private repo; say hi for access: https://calendly.com/aee/aolabs or https://discord.com/invite/nHuJc4Y4n7
+#           - already have access? generate your Personal Access Token from github here: https://github.com/settings/tokens?type=beta 
+RUN --mount=type=secret,id=env,target=/app/.env \
+    export $(grep -v '^#' .env | xargs) && \
+    pip install git+https://${ao_github_PAT}@github.com/aolabsai/ao_core.git
+RUN pip install git+https://github.com/aolabsai/ao_arch.git
+
 EXPOSE 5000
 
+HEALTHCHECK CMD curl --fail http://localhost:5000/_stcore/health
 
-ENTRYPOINT ["python", "app.py"]
-
-
-HEALTHCHECK CMD curl --fail http://localhost:5000 || exit 1
+ENTRYPOINT ["flask", "app.py", "--server.port=5000"]
