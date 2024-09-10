@@ -34,6 +34,9 @@ The ARC challenge is to create an AI that can solve different kinds of visual pu
 5. Go to apps folder and open `testing_interface.html` file in the browser 
 
 
+## Usage
+
+The agent architecture is pre defined `arch_ARC.py` and it trains on a training sample for a particular task. And displays a predicted output on the web page.  
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
