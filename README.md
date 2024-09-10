@@ -72,6 +72,11 @@ Agents have 3 layers here, an input layer, state layer, and output layer.
 
 The `arch_ARC.py` file defines the structure and architecture of the agent used in the project. Training and testing puzzles, provided by [ARC-AGI](https://github.com/fchollet/ARC-AGI), are stored in the `Data` folder in JSON format. The `apps` folder contains the frontend code, including JavaScript, HTML, and CSS, for rendering the web interface. The backend is handled by the `app.py` file, which is written in Flask.
 
+## Future Work
+
+- We could try a different way to connect neighboring neurons, either in a rectangular pattern or a circular one.
+- We are thinking of making sub groups of puzzles based on the types and use different agent for each sub group. 
+
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
