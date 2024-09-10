@@ -1,7 +1,7 @@
 # ARC-AGI aolabs agent
 **Author & maintainer:** [kushagra7777](https://github.com/Kushagra7777), [kushagra@aolabs.ai].
 
-**Description:** ARC is a general AI benchmark and here at AO Labs we are trying to solve it with weight less neural network (WNN) architecture which is a different approach than deep learning. 
+**Description:** ARC is a general AI benchmark and here at AO Labs we are trying to solve it with Weightless Neural Network (WNN) architecture which is a different approach than deep learning. 
 
 ## Introduction
 
@@ -37,6 +37,35 @@ The ARC challenge is to create an AI that can solve different kinds of visual pu
 ## Usage
 
 The agent architecture is predefined in the `arch_ARC.py` file. It is designed to train on a training sample for a given task and then display the predicted output on a web page. 
+
+
+### Task Workflow Overview
+
+Agents have 3 layers here, an input layer, state layer, and output layer.
+
+1. **Padding Training Puzzles**  
+   - All training puzzles (both input and output) are padded to a size of 30x30.
+   - A new null color is defined specifically for padding purposes.
+
+2. **Binary Conversion**  
+   - The padded arrays are converted into binary arrays.
+   - Each color in the puzzle is represented by a four-digit binary code.
+   - These binary codes are stored in new binary array variables.
+
+3. **Training the Agent**  
+   - The agent is trained using these binary arrays.
+   - The agent operates using a nearest-neighbor connection strategy, where only neighboring neurons are connected.
+   - The number of neighbors is defined by the `connector_parameters` variable in the code.
+
+4. **Testing the Agent**  
+   - For testing, the fresh test input is first padded in the same way as the training puzzles.
+   - The padded test input is then converted into a binary format.
+   - The binary test input is fed into the agent to obtain the solution in binary form.
+
+5. **Post-Processing Output**  
+   - The agent's output (in binary) is converted back to its original format (de-binarization).
+   - The result is depadded in the same manner as the original padding step.
+   - The final output is then displayed on the webpage.
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
