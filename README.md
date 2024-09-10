@@ -36,7 +36,7 @@ The ARC challenge is to create an AI that can solve different kinds of visual pu
 
 ## Usage
 
-The agent architecture is pre defined `arch_ARC.py` and it trains on a training sample for a particular task. And displays a predicted output on the web page.
+The agent architecture is predefined in the `arch_ARC.py` file. It is designed to train on a training sample for a given task and then display the predicted output on a web page. 
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
