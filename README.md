@@ -77,6 +77,9 @@ The `arch_ARC.py` file defines the structure and architecture of the agent used 
 - We could try a different way to connect neighboring neurons, either in a rectangular pattern or a circular one.
 - We are thinking of making sub groups of puzzles based on the types and use different agent for each sub group. 
 
+## How to contribute
+
+Fork the repo make your changes and submit a pull request
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
