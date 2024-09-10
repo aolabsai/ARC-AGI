@@ -68,6 +68,11 @@ Agents have 3 layers here, an input layer, state layer, and output layer.
    - The final output is then displayed on the webpage.
 
 
+## File Structure
+
+The `arch_ARC.py` file defines the structure and architecture of the agent used in the project. Training and testing puzzles, provided by [ARC-AGI](https://github.com/fchollet/ARC-AGI), are stored in the `Data` folder in JSON format. The `apps` folder contains the frontend code, including JavaScript, HTML, and CSS, for rendering the web interface. The backend is handled by the `app.py` file, which is written in Flask.
+
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
