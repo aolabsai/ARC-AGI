@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import numpy as np
 import json
@@ -9,6 +9,11 @@ from ARC_functions import ARC_main  # the main function which takes task as argu
 app = Flask(__name__)
 CORS(app)
 
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/process_task', methods=['POST'])
 def process_task():
     print('Loading in process...')
@@ -17,9 +22,6 @@ def process_task():
     tasks = []
     tasks.append(task_name)
     Data = ARC_main(tasks)
-
-
-    
 
     pred_array = Data[0]
     # pred_array = pred_array.tolist()
@@ -32,8 +34,10 @@ def process_task():
     print('Done.')
     return jsonify(pred_array=pred_array)
 
+# @app.route('/test')
+# def test():
+#     return "Hello, World!"
+
 if __name__ == '__main__':
-    app.run(debug=True)
-
-
-
+    print("Starting AO ARC-AGI app")
+    app.run(debug=True, host='0.0.0.0', port=5000)

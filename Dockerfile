@@ -1,11 +1,14 @@
 # ao_app/Dockerfile
+#
+# Dev Notes: 
+#    - compared to aolabsai/MNIST_streamlit and aolabsai/Recommender, this Dockerfile is different to support Flask (note the default Flask port:5000)
 
 # First, build this container by running the 2 commands below in a Git Bash terminal:
 # $ export DOCKER_BUILDKIT=1
 # $ docker build --secret id=env,src=.env -t "ao_app" .
 
 # Then, run the container with this command:
-# $ docker run -p 8501:8501 "ao_app"
+# $ docker run -p 5000:5000 "ao_app"
 
 # You can then access your app at: http://localhost:8501/
 
@@ -27,10 +30,15 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the app code including the requirements file 
-COPY . /app
+# COPY . /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+
 
 # Install dependencies from the requirements file
 RUN pip install -r requirements.txt
+RUN pip install python-dotenv
 
 # Install AO modules, ao_core and ao_arch
 #    Notes: - ao_core is a private repo; say hi for access: https://calendly.com/aee/aolabs or https://discord.com/invite/nHuJc4Y4n7
@@ -44,4 +52,4 @@ EXPOSE 5000
 
 HEALTHCHECK CMD curl --fail http://localhost:5000/_stcore/health
 
-ENTRYPOINT ["flask", "app.py", "--server.port=5000"]
+ENTRYPOINT ["python", "app.py", "--server.port=5000"]
