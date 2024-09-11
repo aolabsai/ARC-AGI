@@ -79,7 +79,7 @@ The `arch_ARC.py` file defines the structure and architecture of the agent used 
 
 ## How to contribute
 
-Fork the repo make your changes and submit a pull request
+Fork the repo make your changes and submit a pull request. Join our [Discord](https://discord.com/invite/nHuJc4Y4n7) and say hi:)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
