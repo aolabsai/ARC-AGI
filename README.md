@@ -52,7 +52,7 @@ docker build --secret id=env,src=.env -t "ao_app" .
 
 docker run -p 5000:5000 "ao_app"
 ```
-You're done! Access the app at `http://localhost:8501/` in your browser. It will automatically led you to ARC app interface. 
+You're done! Access the app at `http://localhost:5000/` in your browser. It will automatically led you to ARC app interface. 
 
 
 
