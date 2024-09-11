@@ -8,7 +8,7 @@
 The ARC challenge is to create an AI that can solve different kinds of visual puzzles. These puzzles require the AI to think abstractly and generalize its understanding based on limited training examples. The goal is to build an AI that can figure out and apply logical rules to solve new puzzles it hasn't seen before.
 
 
-## Steps to follow
+## Local installation steps
 1. **Clone the repository**
 
    ```bash
@@ -31,7 +31,28 @@ The ARC challenge is to create an AI that can solve different kinds of visual pu
    ```bash
    python app.py
    ```
-5. Go to apps folder and open `testing_interface.html` file in the browser   
+5. Go to apps folder and open `testing_interface.html` file in the browser
+
+
+### Docker Installation
+
+1) Generate a GitHub Personal Access Token to ao_core    
+    Go to https://github.com/settings/tokens?type=beta
+
+2) Clone this repo and create a `.env` file in your local clone where you'll add the PAT as follows:
+    `ao_github_PAT=token_goes_here`
+    No spaces! See `.env_example`.
+
+3) In a Git Bash terminal, build and run the Dockerfile with these commands:
+```shell
+export DOCKER_BUILDKIT=1
+
+docker build --secret id=env,src=.env -t "ao_app" .
+
+docker run -p 5000:5000 "ao_app"
+```
+You're done! Access the app at `http://localhost:8501/` in your browser. It will automatically led you to ARC app interface. 
+
 
 
 ## Usage
