@@ -32,7 +32,7 @@ The ARC challenge is to create an AI that can solve different kinds of visual pu
    ```bash
    python app.py
    ```
-5. Go to apps folder and open `testing_interface.html` file in the browser
+5. You're done! Access the app at `http://localhost:5000/` in your browser. It will automatically led you to ARC app interface. 
 
 
 ### Docker Installation
