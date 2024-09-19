@@ -198,7 +198,14 @@ def ARC_main(tasks):
             # Run the arcAgent multiple times for prediction
             for run in range(5):
                 # Get the next state of the arcAgent
-                arcAgent.next_state(inp_binary)
+
+                ## some code to check if the Z channel has gotten the right response, to trigger that channel's C neuron
+                matching_percentage = calculate_matching_percentage(test_output_data, final_z_output)
+                right_answers = # some code to compare Z response with ARC answers, saving in var right_answers the channels that are correct (out of 30)
+
+                arcAgent.story[arcAgent.state+1, arcAgent.arch.C__flat] = right_answers
+                arcAgent.next_state(inp_binary, INSTINCTS=True)
+
                 z_index = arcAgent.arch.Z__flat  # Get the current index from the architecture
                 q_index = arcAgent.arch.Q__flat
                 s = arcAgent.state - 1  # Get the state index
