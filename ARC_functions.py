@@ -189,6 +189,8 @@ def ARC_main(tasks):
             # Convert the padded input array to binary format
             inp_binary = ARC_to_binary(inp_padded)
 
+            arcAgent.story[arcAgent.state - 1, arcAgent.arch.Q__flat] = inp_binary
+
             onp = np.asarray(pair['output'])  # Convert output data to NumPy array
             # Pad the output array
             onp_padded = pad_ARC(onp)
