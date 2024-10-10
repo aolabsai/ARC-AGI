@@ -25,7 +25,7 @@ connector_parameters = [4, 4, neurons_x, neurons_y, Z2I_connections]  #ax, dg, n
 arcArch = ar.Arch(arch_i, arch_z, arch_c, connector_function, connector_parameters, description)
 
 
-arcAgent = ao.Agent( arcArch )
+arcAgent = ao.Agent( arcArch, save_meta=False, _steps=100000 )
 
 
 
