@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>ARC testing interface</title>
+        <title>ARC-AO testing interface</title>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -15,6 +15,7 @@
 
         <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 
+        <link rel="icon" type= "image/x-icon" href="{{url_for('static', filename='ao_favicon.png')}}" >
     </head>
     <body>
         <div id="modal_bg">
@@ -103,13 +104,12 @@
                                     <div class="cell" symbol="0" x="2" y="2"></div>
                                 </div>
                             </div> -->
-                            <div class="text2">Test predicted output grid </div>
-                            <div id="evaluation_predicted_output" class="selectable_grid" ></div>
-                           
 
                             <div class="text2">Q state </div>
                             <div id="evaluation_qstate_output" class="selectable_grid" ></div>
 
+                            <div class="text2">Test predicted output grid </div>
+                            <div id="evaluation_predicted_output" class="selectable_grid" ></div>
 
                             <!-- <div class="text2">
                             <select id="indexSelector"></select>
