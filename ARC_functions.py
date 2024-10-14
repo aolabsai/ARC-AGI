@@ -177,6 +177,7 @@ def ARC_main(tasks):
 
         # Get the number of test examples
         test_len = len(task_data['test'])
+        arcAgent.reset_state()   # <------
 
         
         file_data = []
@@ -188,7 +189,9 @@ def ARC_main(tasks):
             inp_padded = pad_ARC(inp)
             # Convert the padded input array to binary format
             inp_binary = ARC_to_binary(inp_padded)
-
+            
+            arcAgent.story[arcAgent.state, arcAgent.arch.Q__flat] = inp_binary   # <------
+            
             onp = np.asarray(pair['output'])  # Convert output data to NumPy array
             # Pad the output array
             onp_padded = pad_ARC(onp)
@@ -215,6 +218,7 @@ def ARC_main(tasks):
                 test_data.append(pr) 
 
             file_data.append(test_data)
+            arcAgent.reset_state()   # <------
 
         Data.append(file_data)   
         print('Training Done for Task ', task) 
