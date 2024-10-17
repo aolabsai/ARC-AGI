@@ -20,8 +20,9 @@
     <body>
         <div id="modal_bg">
             <div id="modal">
-                <img src="{{url_for('static', filename='images/aolabs-logo-horizontal-full-color-white-text.png')}}"
-                <div>Welcome to the ARC-AO testing interface. <br /> Choose a task file to start, or click on "Random task" to load one from the ARC project on GitHub.</div>
+                <div>Welcome to the ARC-AO testing interface. <br /> 
+                  Through this interface you can run our agents on public tasks from the Abstraction and Reasoning Corpus for Artificial General Intelliegence (ARC-AGI).<br />
+                  Choose a task file to start, or click on "Random task" to load one from the ARC project on GitHub.</div>
                 <br />
                 <input type="file" id="load_task_file_input" class="load_task" style="display: none;"/>
                 <input type="button" value="Browse..." onclick="document.getElementById('load_task_file_input').click();" />
