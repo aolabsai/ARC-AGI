@@ -91,3 +91,10 @@
     margin: 20px;
 }
 
+#footer {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: fit-content;
+  bottom: 0;
+  width: 100%;
+}

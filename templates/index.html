@@ -15,7 +15,7 @@
 
         <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 
-        <link rel="icon" type= "image/x-icon" href="{{url_for('static', filename='ao_favicon.png')}}" >
+        <link rel="icon" type= "image/x-icon" href="{{url_for('static', filename='images/ao_favicon.png')}}" >
     </head>
     <body>
         <div id="modal_bg">
@@ -105,10 +105,10 @@
                                 </div>
                             </div> -->
 
-                            <div class="text2">Q state </div>
+                            <div class="text2">AO Agent Inner (Q) state </div>
                             <div id="evaluation_qstate_output" class="selectable_grid" ></div>
 
-                            <div class="text2">Test predicted output grid </div>
+                            <div class="text2">AO Agent Predicted (Z) Output</div>
                             <div id="evaluation_predicted_output" class="selectable_grid" ></div>
 
                             <!-- <div class="text2">
@@ -160,5 +160,11 @@
                 </div>
             </div>
         </div>
+        <footer id="footer">
+          <p>Agent Architecture</p>
+          <p>- 7200 neurons in 30x30 input to 30x30 output channels, 4 neurons per channel</p>
+          <p>- Connection Strategy: nearest_neighbour_conn</p>
+          <p>- Connection Params: ax= 4, dg= 4, neurons_x=30, neurons_y=30, Z2I_connections=True</p>
+        </footer>
     </body>
 </html>
