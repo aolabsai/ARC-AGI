@@ -1,6 +1,7 @@
 Flask
 flask-cors
 numpy
+gunicorn
 
 # AO modules
 # git+https://github.com/aolabsai/ao_core

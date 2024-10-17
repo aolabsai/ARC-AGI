@@ -50,4 +50,5 @@ EXPOSE 5000
 HEALTHCHECK CMD curl --fail http://localhost:5000/_stcore/health || exit 1
 
 # Start the Flask application
-ENTRYPOINT ["python", "app.py"]
+# ENTRYPOINT ["python", "app.py"]
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:5000", "-w", "4", "wsgi:app"]
