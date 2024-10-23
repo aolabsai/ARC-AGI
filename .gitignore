@@ -6,3 +6,6 @@ venv/
 
 #enviroment variables and secrets
 .env
+
+#session cache
+sessions

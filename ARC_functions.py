@@ -7,26 +7,35 @@ import random
 import ao_core as ao
 import ao_arch as ar
 
-neurons_x = 30  # Number of neurons in the x direction (global variable)
+
+
+neurons_x = 30  # Number of neurons in the x direction (global variable
 neurons_y = 30  # Number of neurons in the y direction
-description = "ARC-AGI agent"  # Description of the agent
 
-# Initialize the input and output architecture with 4 neurons per channel
-arch_i = [4 for x in range(neurons_x * neurons_y)]  # Input architecture (4 neuron per channel for encoding colors in binary) 
-arch_z = [4 for x in range(neurons_x * neurons_y)]  # Output architecture 
-arch_c = []  
-connector_function = "nearest_neighbour_conn"  # Function for connecting neurons
-
-
-Z2I_connections = True #wether want Z to I connection or not. If not specified, by default it's False. 
-connector_parameters = [4, 4, neurons_x, neurons_y, Z2I_connections]  #ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
-
-# Create the architecture using the Arch class from the ao_arch library
-arcArch = ar.Arch(arch_i, arch_z, arch_c, connector_function, connector_parameters, description)
-
-
-arcAgent = ao.Agent( arcArch, save_meta=False, _steps=100000 )
-
+def setup_agent():
+    # Description of the agent
+    description = "ARC-AGI agent"  
+    
+    # Initialize the input and output architecture with 4 neurons per channel
+    # Input architecture (4 neuron per channel for encoding colors in binary) 
+    arch_i = [4 for _ in range(neurons_x * neurons_y)]  
+    # Output architecture 
+    arch_z = [4 for _ in range(neurons_x * neurons_y)] 
+    arch_c = []  
+    # Function for connecting neurons
+    connector_function = "nearest_neighbour_conn"  
+    
+    #wether want Z to I connection or not. If not specified, by default it's False. 
+    Z2I_connections = True 
+    #ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
+    connector_parameters = [4, 4, neurons_x, neurons_y, Z2I_connections]  
+    
+    # Create the architecture using the Arch class from the ao_arch library
+    arcArch = ar.Arch(arch_i, arch_z, arch_c, connector_function, connector_parameters, description)
+    
+    
+    arcAgent = ao.Agent( arcArch, save_meta=False, _steps=100000 )
+    return arcAgent
 
 
 
@@ -144,7 +153,7 @@ def depad_ARC(arr, pad_value=10):
     return depadded_arr
 
 
-def ARC_main(tasks):
+def ARC_main(arcAgent, tasks):
     Data = []
     for task in tasks:
         print('Training going on for task..', task)
