@@ -266,9 +266,16 @@ function runAgent() {
     document.getElementById('agentStatus').innerText = 'AGENT IS RUNNING...';
     $.ajax({
         url: 'http://127.0.0.1:5000/process_task',
+        // url: 'http://0.0.0.0:5000/process_task',
+        // url: '{{url_for(process_task, )}}
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ task_name: task['name'] }),
+        dataType: 'json',
+        xhrFields: {
+          withCredentials: true
+        },
+        crossDomain: true,
         success: function(response) {
             try {
                 pred_array = JSON.parse(response.pred_array);
@@ -286,9 +293,14 @@ function runAgent() {
                 console.error(e);
             }
         },
-        error: function() {
+        error: function(jqxhr, textStatus, errorThrown) {
             errorMsg('Error processing task on server');
             // Clear the status message
+            console.error(textStatus)
+            console.error(errorThrown)
+            console.error(jqxhr.status)
+            console.error(jqxhr.statusText)
+            console.error(jqxhr.responseText)
             document.getElementById('agentStatus').innerText = '';
         }
     });

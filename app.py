@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, session
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_session import Session
 from cachelib.file import FileSystemCache
 import numpy as np
@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.config["SESSION_TYPE"] = "cachelib"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_CACHELIB"] = FileSystemCache(threshold=100, cache_dir="./sessions")
-CORS(app)
+CORS(app, supports_credentials=True)
 Session(app)
 
 
@@ -29,6 +29,7 @@ def index():
 
 
 @app.route("/process_task", methods=["POST"])
+@cross_origin(supports_credentials=True)
 def process_task():
     if "agent" not in session:
         session["agent"] = setup_agent()
