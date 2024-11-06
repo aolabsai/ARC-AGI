@@ -265,9 +265,7 @@ function runAgent() {
     // Display the status message
     document.getElementById('agentStatus').innerText = 'AGENT IS RUNNING...';
     $.ajax({
-        url: 'http://127.0.0.1:5000/process_task',
-        // url: 'http://0.0.0.0:5000/process_task',
-        // url: '{{url_for(process_task, )}}
+        url: '/process_task',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ task_name: task['name'] }),
