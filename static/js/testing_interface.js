@@ -319,7 +319,7 @@ function updateIndexValue() {
 }
 
 function increaseIndex() {
-    if (currentIndex < 4) {
+    if (currentIndex < 19) {
         currentIndex++;
     }
     updateIndexValue();

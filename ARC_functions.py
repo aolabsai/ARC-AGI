@@ -9,7 +9,7 @@ import ao_arch as ar
 
 
 
-neurons_x = 30  # Number of neurons in the x direction (global variable
+neurons_x = 30  # Number of neurons in the x direction (global variable)
 neurons_y = 30  # Number of neurons in the y direction
 
 def setup_agent():
@@ -22,14 +22,17 @@ def setup_agent():
     # Output architecture 
     arch_z = [4 for _ in range(neurons_x * neurons_y)] 
     arch_c = []  
+
     # Function for connecting neurons
     connector_function = "nearest_neighbour_conn"  
+    # wether want Z to I connection or not. If not specified, by default it's False. 
+    Z2I_connections = False 
+    # ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
+    connector_parameters = [5, 5, neurons_x, neurons_y, Z2I_connections]  
     
-    #wether want Z to I connection or not. If not specified, by default it's False. 
-    Z2I_connections = True 
-    #ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
-    connector_parameters = [4, 4, neurons_x, neurons_y, Z2I_connections]  
-    
+    # connector_function = "rand_conn"
+    # connector_parameters = [3600*.3, 3600*.3, 3600*.3, 3600*.3]
+
     # Create the architecture using the Arch class from the ao_arch library
     arcArch = ar.Arch(arch_i, arch_z, arch_c, connector_function, connector_parameters, description)
     
@@ -155,6 +158,16 @@ def depad_ARC(arr, pad_value=10):
 
 def ARC_main(arcAgent, tasks):
     Data = []
+    
+    arcAgent.reset_state()
+    arcAgent.reset_state(training=True)
+    arcAgent.reset_state(training=True)
+    # arcAgent.reset_state(training=True)
+    # arcAgent.reset_state()
+    # arcAgent.reset_state(training=True)
+    # arcAgent.reset_state()
+    # arcAgent.reset_state(training=True)
+
     for task in tasks:
         print('Training going on for task..', task)
         # Construct the full path for the current file
@@ -182,7 +195,7 @@ def ARC_main(arcAgent, tasks):
             # Reset the state of the arcAgent
             arcAgent.reset_state()
             # Train the arcAgent with the input binary data and the label
-            arcAgent.next_state(inp_binary, LABEL=onp_binary, unsequenced=True)  # Training with label on
+            arcAgent.next_state(inp_binary, LABEL=onp_binary)  # Training with label on
 
         # Get the number of test examples
         test_len = len(task_data['test'])
@@ -199,7 +212,7 @@ def ARC_main(arcAgent, tasks):
             # Convert the padded input array to binary format
             inp_binary = ARC_to_binary(inp_padded)
             
-            arcAgent.story[arcAgent.state, arcAgent.arch.Q__flat] = inp_binary   # <------
+            arcAgent.story[arcAgent.state-1, arcAgent.arch.Q__flat] = inp_binary   # <------
             
             onp = np.asarray(pair['output'])  # Convert output data to NumPy array
             # Pad the output array
@@ -208,12 +221,12 @@ def ARC_main(arcAgent, tasks):
             onp_binary = ARC_to_binary(onp_padded)
 
             # Run the arcAgent multiple times for prediction
-            for run in range(5):
+            for run in range(20):
                 # Get the next state of the arcAgent
                 arcAgent.next_state(inp_binary)
                 z_index = arcAgent.arch.Z__flat  # Get the current index from the architecture
                 q_index = arcAgent.arch.Q__flat
-                s = arcAgent.state - 1  # Get the state index
+                s = arcAgent.state - 2  # Get the state index
                 
                 # print('S:', s)
                 # print(z_index[166])

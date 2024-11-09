@@ -31,14 +31,16 @@ def index():
 @app.route("/process_task", methods=["POST"])
 @cross_origin(supports_credentials=True)
 def process_task():
-    if "agent" not in session:
-        session["agent"] = setup_agent()
+    # if "agent" not in session:
+        # session["agent"] = setup_agent()
+    session["agent"] = setup_agent()
     print("Loading in process...")
     data = request.json
     task_name = data["task_name"]
     tasks = []
     tasks.append(task_name)
     agent = session["agent"]
+    # print("AGENT CURRENTLY AT: "+str(agent.state))
     Data = ARC_main(agent, tasks)
 
     pred_array = Data[0]
