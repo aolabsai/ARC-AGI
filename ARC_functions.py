@@ -18,20 +18,24 @@ def setup_agent():
     
     # Initialize the input and output architecture with 4 neurons per channel
     # Input architecture (4 neuron per channel for encoding colors in binary) 
-    arch_i = [4 for _ in range(neurons_x * neurons_y)]  
+    # arch_i = [4 for _ in range(neurons_x * neurons_y)]  
+    arch_i = [4 for _ in range(9)]  
     # Output architecture 
-    arch_z = [4 for _ in range(neurons_x * neurons_y)] 
+    arch_z = [4] 
     arch_c = []  
 
     # Function for connecting neurons
-    connector_function = "nearest_neighbour_conn"  
-    # wether want Z to I connection or not. If not specified, by default it's False. 
-    Z2I_connections = False 
-    # ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
-    connector_parameters = [5, 5, neurons_x, neurons_y, Z2I_connections]  
+    # connector_function = "nearest_neighbour_conn"  
+    # # wether want Z to I connection or not. If not specified, by default it's False. 
+    # Z2I_connections = False 
+    # # ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
+    # connector_parameters = [5, 5, neurons_x, neurons_y, Z2I_connections]  
     
     # connector_function = "rand_conn"
     # connector_parameters = [3600*.3, 3600*.3, 3600*.3, 3600*.3]
+
+    connector_function = "full_conn"
+    connector_parameters = []
 
     # Create the architecture using the Arch class from the ao_arch library
     arcArch = ar.Arch(arch_i, arch_z, arch_c, connector_function, connector_parameters, description)
@@ -41,6 +45,26 @@ def setup_agent():
     return arcAgent
 
 
+
+def rectangle_points(row, col, x, y, size=(30, 30)):
+    # Boundaries for the grid
+    max_row, max_col = size
+
+    # Calculating the boundaries considering the size limits
+    top_row = max(0, row - y)
+    left_col = max(0, col - x)
+
+    bottom_row = min(max_row - 1, row + y)
+    right_col = min(max_col - 1, col + x)
+
+  
+    # Collecting all coordinates inside the rectangle
+    points = []
+    for r in range(top_row, bottom_row + 1):
+        for c in range(left_col, right_col + 1):
+            points.append((r, c))
+    
+    return points
 
 ##padding function
 
@@ -195,7 +219,37 @@ def ARC_main(arcAgent, tasks):
             # Reset the state of the arcAgent
             arcAgent.reset_state()
             # Train the arcAgent with the input binary data and the label
-            arcAgent.next_state(inp_binary, LABEL=onp_binary)  # Training with label on
+            # arcAgent.next_state(inp_binary, LABEL=onp_binary)  # Training with label on
+            r = 0
+            c = 0
+            iii=0
+            focus_input_batch = np.zeros([900, 9*4])
+            LABEL_batch = np.zeros([900, 4])
+            for i in np.arange(0, 3600, 4):
+                print("TRAINING: "+str(i)+" - "+ str(r)+", "+str(c)) 
+                ii = 0
+                focus_inp_padded = np.zeros(9, dtype=int)
+                points = rectangle_points(r, c, 1, 1, (30,30))
+                for p in points:
+                    focus_inp_padded[ii] = inp_padded[p[0], p[1]]
+                    ii += 1
+                focus_input = ARC_to_binary(focus_inp_padded)
+                focus_input_batch[iii, :] = focus_input 
+                # focus_input_batch[iii] = focus_input
+                LABEL=onp_binary[i:i+4]
+                # LABEL_batch[iii] = LABEL
+                LABEL_batch[iii, :] = LABEL
+                print("SHAPE LABEL "+ str(LABEL_batch.shape))
+                print("SHAPE INPUT "+ str(focus_input_batch.shape))
+                # arcAgent.next_state(focus_input, LABEL=onp_binary[i:i+4])  # Training with label on
+                iii += 1
+                c += 1
+                if c == 30:
+                    c = 0
+                    r += 1
+                    if r == 30:
+                        r = 0
+            arcAgent.next_state_batch(focus_input_batch, LABEL_batch, unsequenced=True)
 
         # Get the number of test examples
         test_len = len(task_data['test'])
@@ -212,7 +266,7 @@ def ARC_main(arcAgent, tasks):
             # Convert the padded input array to binary format
             inp_binary = ARC_to_binary(inp_padded)
             
-            arcAgent.story[arcAgent.state-1, arcAgent.arch.Q__flat] = inp_binary   # <------
+            # arcAgent.story[arcAgent.state-1, arcAgent.arch.Q__flat] = inp_binary   # <------
             
             onp = np.asarray(pair['output'])  # Convert output data to NumPy array
             # Pad the output array
@@ -221,17 +275,40 @@ def ARC_main(arcAgent, tasks):
             onp_binary = ARC_to_binary(onp_padded)
 
             # Run the arcAgent multiple times for prediction
-            for run in range(20):
+            for run in range(3):
                 # Get the next state of the arcAgent
-                arcAgent.next_state(inp_binary)
-                z_index = arcAgent.arch.Z__flat  # Get the current index from the architecture
-                q_index = arcAgent.arch.Q__flat
-                s = arcAgent.state - 2  # Get the state index
-                
+                # arcAgent.next_state(inp_binary)
+                response = np.zeros(3600, dtype=int)
+                r = 0
+                c = 0
+                for i in np.arange(0, 3600, 4):
+                    print("TESTINGGGGG: "+ str(r)+", "+str(c)) 
+                    ii = 0
+                    focus_inp_padded = np.zeros(9, dtype=int)
+                    points = rectangle_points(r, c, 1, 1, (30,30))
+                    for p in points:
+                        focus_inp_padded[ii] = inp_padded[p[0], p[1]]
+                        ii += 1
+                    focus_input = ARC_to_binary(focus_inp_padded)
+                    response[i:i+4] = arcAgent.next_state(focus_input, DD=False)  # Training with label on
+                    c += 1
+                    if c == 30:
+                        c = 0
+                        r += 1
+                        if r == 30:
+                            r = 0
+                print(response.shape)
+                print(response)
+                # z_index = arcAgent.arch.Z__flat  # Get the current index from the architecture
+                # q_index = arcAgent.arch.Q__flat
+                s = arcAgent.state - 1  # Get the state index
+
                 # print('S:', s)
                 # print(z_index[166])
-                response = arcAgent.story[s, z_index]  # Get the response from the story
-                response_q = arcAgent.story[s, q_index]
+                # response = arcAgent.story[s, z_index]  # Get the response from the story
+                # response = np.asarray(response)
+                # response_q = arcAgent.story[s, q_index]
+                response_q = np.zeros(4*30*30, dtype=int)
                 arr_op_pad = binary_to_ARC(response)
                 q_arr_op_pad = binary_to_ARC(response_q)
                 arr_op = depad_ARC(arr_op_pad).tolist()
