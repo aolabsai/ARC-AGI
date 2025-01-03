@@ -4,7 +4,7 @@ build:
 	docker tag ao_arc_app aolabs/arc-agi
 
 run:
-	docker run -p 8501:8501 aolabs/arc-agi:latest
+	docker run -p 5000:5000 aolabs/arc-agi:latest
 
 push:
 	docker push aolabs/arc-agi:latest
