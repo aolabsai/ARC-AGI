@@ -5,5 +5,7 @@ numpy
 gunicorn
 
 # AO modules
-# git+https://github.com/aolabsai/ao_core
-# git+https://github.com/aolabsai/ao_arch
+#   to run this Flask app in the docker container,
+#   uncomment the two "git+" lines below (the dockerfile will install them)
+git+https://github.com/aolabsai/ao_core # private repo-- you'll need access via github (contact us: https://discord.gg/nHuJc4Y4n7) 
+git+https://github.com/aolabsai/ao_arch
