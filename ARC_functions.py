@@ -5,7 +5,7 @@ import random
 
 # assumes an available local installation of ao_core; refer to https://github.com/aolabsai/ao_core?tab=readme-ov-file#installing-ao_core
 import ao_core as ao
-import ao_arch as ar
+# import ao_arch as ar
 
 neurons_x = 30  # Number of neurons in the x direction (global variable)
 neurons_y = 30  # Number of neurons in the y direction
@@ -22,7 +22,7 @@ Z2I_connections = True #wether want Z to I connection or not. If not specified, 
 connector_parameters = [4, 4, neurons_x, neurons_y, Z2I_connections]  #ax, dg, neurons_x, neurons_y and Z2I connection (True or default False)
 
 # Create the architecture using the Arch class from the ao_arch library
-arcArch = ar.Arch(arch_i, arch_z, arch_c, connector_function, connector_parameters, description)
+arcArch = ao.Arch(arch_i, arch_z, arch_c, connector_function, connector_parameters, description)
 
 
 arcAgent = ao.Agent( arcArch, save_meta=False, _steps=100000 )
